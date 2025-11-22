@@ -36,14 +36,26 @@ struct Home: View {
             
             HStack(spacing: 15) {
               
-              HStack {
+              HStack(spacing: 15) {
                 
                 Circle()
                   .stroke(.white, lineWidth: 4)
-                  .frame(width: 35, height: 35)
+                  .frame(width: 25, height: 25)
                 
                 TextField("Search...", text: $searchText)
               }
+              .padding(.vertical, 10)
+              .padding(.horizontal)
+              .background(Color.white.opacity(0.08))
+              .cornerRadius(8)
+              
+              Button(action: {}, label: {
+                Image("profile")
+                  .resizable()
+                  .aspectRatio(contentMode: .fill)
+                  .frame(width: 45, height: 45)
+                  .cornerRadius(10)
+              })
             }
           }
           .padding()

@@ -8,11 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        Home()
-    }
+  var body: some View {
+    Home()
+    // always dark mode...
+      .preferredColorScheme(.dark)
+  }
 }
 
 #Preview {
-    ContentView()
+  ContentView()
 }
