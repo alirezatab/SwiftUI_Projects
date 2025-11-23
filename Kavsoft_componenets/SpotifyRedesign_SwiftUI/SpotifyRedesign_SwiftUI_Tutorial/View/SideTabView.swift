@@ -95,7 +95,7 @@ struct SideTabView: View {
           .rotationEffect(.init(degrees: showSideBar ? -180 : 0))
           .padding()
           .background(.black)
-          .cornerRadius(10)
+          .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
           .shadow(radius: 5)
       })
       .padding(.top, proxy.size.height < 75 ? 10 : 30)

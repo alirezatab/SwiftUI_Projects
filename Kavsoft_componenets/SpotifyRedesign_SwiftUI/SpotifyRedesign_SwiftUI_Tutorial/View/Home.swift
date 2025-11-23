@@ -47,14 +47,14 @@ struct Home: View {
             .padding(.vertical, 10)
             .padding(.horizontal)
             .background(Color.white.opacity(0.06))
-            .cornerRadius(8)
+            .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
             
             Button(action: {}, label: {
               Image("profile")
                 .resizable()
                 .aspectRatio(contentMode: .fill)
                 .frame(width: 45, height: 45)
-                .cornerRadius(10)
+                .clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
             })
           }
           
@@ -79,14 +79,14 @@ struct Home: View {
                   // from Tutorial: if you are using fill, then you must specify width...
                     .aspectRatio(contentMode: .fill)
                     .frame(width: TabProxy.size.width, height: TabProxy.size.height)
-                    .cornerRadius(20)
+                    .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                   // Dark shading at bottom so that the data will be visible...
                     .overlay(
                       LinearGradient(
                         gradient: .init(colors: [.clear, .clear, .black]),
                         startPoint: .top,
                         endPoint: .bottom)
-                      .cornerRadius(20)
+                      .clipShape(RoundedRectangle(cornerRadius: 20, style: .continuous))
                     )
                   
                   
@@ -170,7 +170,7 @@ struct Home: View {
                     .resizable()
                     .aspectRatio(contentMode: .fill)
                     .frame(width: proxy.frame(in: .global).width, height: 150)
-                  //.cornerRadius(10)
+                  //.clipShape(RoundedRectangle(cornerRadius: 10, style: .continuous))
                   // based on index number were changing the corner style...
                     .clipShape(
                       CustomerCorners(
