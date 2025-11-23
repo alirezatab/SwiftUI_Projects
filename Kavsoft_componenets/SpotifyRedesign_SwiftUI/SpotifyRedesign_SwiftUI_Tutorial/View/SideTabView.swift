@@ -19,8 +19,8 @@ struct SideTabView: View {
   var proxy: GeometryProxy
   
   var body: some View {
-    
     // SideBar Tab Bar
+    // Optimizing for smaller size iphone...
     VStack {
       Image("spotify")
         .resizable()
@@ -30,18 +30,15 @@ struct SideTabView: View {
       
       VStack {
         TabButton(image: "house.fill", selectedTab: $selectedTab)
-        
         TabButton(image: "safari.fill", selectedTab: $selectedTab)
-        
         TabButton(image: "mic.fill", selectedTab: $selectedTab)
-        
         TabButton(image: "clock.fill", selectedTab: $selectedTab)
       }
       // setting the tabs for half of the height so that remanining element will get space...
       .frame(height: proxy.size.height / 2.3)
       .padding(.top)
       
-      Spacer(minLength: 50)
+      Spacer(minLength: proxy.size.height < 750 ? 30 : 50)
       
       Button(action: {
         // checking and increasing volume...
@@ -75,7 +72,7 @@ struct SideTabView: View {
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .center)
       }
-      .padding(.vertical, 20)
+      .padding(.vertical, proxy.size.height < 75 ? 15 : 20)
       
       Button(action: {
         // checking and decreasing volume...
@@ -101,14 +98,14 @@ struct SideTabView: View {
           .cornerRadius(10)
           .shadow(radius: 5)
       })
-      .padding(.top, 30)
+      .padding(.top, proxy.size.height < 75 ? 10 : 30)
       .padding(.bottom, proxy.safeAreaInsets.bottom == 0 ? 15 : 0)
       .offset(x: showSideBar ? 0 : 100)
     }
     // max side Bar width
     .frame(width: 80)
     .background(Color.black.ignoresSafeArea())
-    .offset(x: showSideBar ? 0 : -100)
+    .offset(x: showSideBar ? 0 : -80)
     // reclaiming the spacing by using negatve spacing...
     // if you want to move the along with tab bar .. Dont comment below code
     .padding(.trailing, showSideBar ? 0 : -100)
@@ -119,8 +116,56 @@ struct SideTabView: View {
   }
 }
 
+struct TabButton: View {
+  var image: String
+  @Binding var selectedTab: String
+  
+  var body: some View {
+      Button(action: {
+        withAnimation { selectedTab = image }
+      }, label: {
+        Image(systemName: image)
+          .font(.title)
+          .foregroundStyle(
+            selectedTab == image
+            ? .white
+            : .gray.opacity(0.6))
+          .frame(maxHeight: .infinity)
+      })
+  }
+}
+
+// Extending View to get Screen Size...
+// deprecated
+/*
+extension View {
+  // deprecated so used Geometry reader instead
+  func getRect()->CGRect{
+    return UIScreen.main.bounds
+  }
+  
+  func getSafeArea() -> UIEdgeInsets {
+    return UIApplication.shared.windows.first?.safeAreaInsets ?? UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0)
+  }
+}
+*/
+
+extension View {
+  /// Modern SwiftUI-safe way to get screen size (no UIScreen)
+  func screenSize(_ proxy: GeometryProxy) -> CGSize {
+      proxy.size
+  }
+
+  /// Modern SwiftUI-safe way to get safe area insets
+  func safeArea(_ proxy: GeometryProxy) -> EdgeInsets {
+      proxy.safeAreaInsets
+  }
+}
 
 #Preview {
-  Home()
+  GeometryReader { proxy in
+    Home(proxy: proxy)
+      .preferredColorScheme(.dark)
+  }
   // SideTabView()
 }

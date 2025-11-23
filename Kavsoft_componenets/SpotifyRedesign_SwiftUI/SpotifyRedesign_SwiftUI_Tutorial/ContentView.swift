@@ -9,9 +9,11 @@ import SwiftUI
 
 struct ContentView: View {
   var body: some View {
-    Home()
-    // always dark mode...
-      .preferredColorScheme(.dark)
+    GeometryReader { proxy in
+      Home(proxy: proxy)
+      // always dark mode...
+        .preferredColorScheme(.dark)
+    }
   }
 }
 
