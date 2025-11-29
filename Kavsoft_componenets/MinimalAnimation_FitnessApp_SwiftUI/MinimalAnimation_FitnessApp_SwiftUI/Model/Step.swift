@@ -10,7 +10,7 @@ import SwiftUI
 //MARK: Steps Bar Graph Mpdel and Sample Data
 struct Step: Identifiable {
   var id = UUID().uuidString
-  var value: CFloat
+  var value: CGFloat
   var key: String
   var color: Color = Color("Purple")
 }

@@ -11,6 +11,9 @@ struct Home: View {
   // MARK: UI Properties
   @State var currentWeek: [Date] = []
   @State var currentDay: Date = Date()
+  
+    // MARK: Animation Properties
+  
   var body: some View {
     VStack(spacing: 20) {
       
@@ -71,6 +74,9 @@ struct Home: View {
       
       // MARK: Fitness Ring View
       FitnessRingCardView()
+      
+      // MARK: Bar Graph View
+      FitnessStepsGraphView()
     }
     .padding()
     .onAppear(perform: extractCurrentWeek)
