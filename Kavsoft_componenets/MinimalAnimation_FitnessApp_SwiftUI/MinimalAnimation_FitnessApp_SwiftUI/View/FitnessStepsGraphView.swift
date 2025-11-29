@@ -70,14 +70,13 @@ struct BarGraph: View {
         }
         
         HStack {
-          ForEach(steps) { step in
+          ForEach(steps.indices, id: \.self) { index in
+            let step = steps[index]
             
             VStack(spacing: 0) {
               
               VStack(spacing: 5) {
-                
-                RoundedRectangle(cornerRadius: 5, style: .continuous)
-                  .fill(step.color)
+                AnimatedBarGraph(step: steps[index], index: index)
               }
               .padding(.horizontal, 5)
               .frame(height: getBarHeight(point: step.value, size: proxy.size))
@@ -101,16 +100,6 @@ struct BarGraph: View {
     .frame(height: 190)
   }
   
-  
-  func getBarHeight(point: CGFloat, size: CGSize) -> CGFloat {
-    let max = getMax()
-    
-    // 25 Text Height
-    // 5 spacing..
-    let height = (point / max) * (size.height - 37)
-    return height
-  }
-  
   func getGraphLines() -> [CGFloat] {
     let max = getMax()
     var lines: [CGFloat] = [ ]
@@ -125,6 +114,15 @@ struct BarGraph: View {
     return lines
   }
   
+  func getBarHeight(point: CGFloat, size: CGSize) -> CGFloat {
+    let max = getMax()
+    
+    // 25 Text Height
+    // 5 spacing..
+    let height = (point / max) * (size.height - 37)
+    return height
+  }
+  
   // Getting Max...
   func getMax() -> CGFloat {
     let max = steps.max { first, second in
@@ -134,3 +132,29 @@ struct BarGraph: View {
     return max
   }
 }
+
+struct AnimatedBarGraph: View {
+  
+  let step: Step
+  let index: Int
+  @State var showBar = false
+  
+  var body: some View {
+    VStack(spacing: 0)  {
+      Spacer(minLength: 0)
+      
+      RoundedRectangle(cornerRadius: 5, style: .continuous)
+        .fill(step.color)
+        .frame(height: showBar ? nil : 0, alignment: .bottom)
+    }
+    .onAppear {
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.6) {
+        withAnimation(.interactiveSpring(response: 0.6, dampingFraction: 0.8, blendDuration: 0.8).delay(Double(index) * 0.1)) {
+          showBar = true
+        }
+      }
+    }
+  }
+}
+
+

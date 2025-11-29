@@ -18,18 +18,7 @@ struct FitnessRingCardView: View {
         // Progress Ring
         ZStack {
           ForEach(rings.indices, id: \.self) { index in
-            ZStack {
-              Circle()
-                .stroke(.gray.opacity(0.3), lineWidth: 10)
-              
-              Circle()
-                .trim(from: 0, to: rings[index].progress / 100)
-                .stroke(rings[index].keyColor,
-                        style: StrokeStyle(
-                          lineWidth: 10, lineCap: .round, lineJoin: .round))
-                .rotationEffect(.init(degrees: -90)) // 270 maybe
-            }
-            .padding(CGFloat(index) * 16)
+            AnimatedRingView(ring: rings[index], index: index)
           }
         }
         .frame(width: 130, height: 130)
@@ -74,4 +63,37 @@ struct FitnessRingCardView: View {
 #Preview {
   //FitnessRingCardView()
   ContentView()
+}
+
+
+struct AnimatedRingView: View {
+  let ring: Ring
+  let index: Int
+  
+  @State var showRing: Bool = false
+  
+  var body: some View {
+    ZStack {
+      Circle()
+        .stroke(.gray.opacity(0.3), lineWidth: 10)
+      
+      Circle()
+        .trim(from: 0, to: showRing ? rings[index].progress / 100 : 0)
+        .stroke(rings[index].keyColor,
+                style: StrokeStyle(
+                  lineWidth: 10, lineCap: .round, lineJoin: .round
+                )
+        )
+        .rotationEffect(.init(degrees: -90)) // 270 works also
+    }
+    .padding(CGFloat(index) * 16)
+    .onAppear {
+      // Show After Initial Animation Finished
+      DispatchQueue.main.asyncAfter(deadline: .now() + 0.4) {
+        withAnimation(.interactiveSpring(response: 1, dampingFraction: 1, blendDuration: 1).delay(Double(index) * 0.1)) {
+          showRing = true
+        }
+      }
+    }
+  }
 }

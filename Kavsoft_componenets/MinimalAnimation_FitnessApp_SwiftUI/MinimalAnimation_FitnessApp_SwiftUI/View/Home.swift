@@ -12,7 +12,8 @@ struct Home: View {
   @State var currentWeek: [Date] = []
   @State var currentDay: Date = Date()
   
-    // MARK: Animation Properties
+  // MARK: Animation Properties
+  @State var showViews: [Bool] = Array(repeating: false, count: 5)
   
   var body: some View {
     VStack(spacing: 20) {
@@ -33,6 +34,8 @@ struct Home: View {
 
       }
       .foregroundStyle(.white)
+      .opacity(showViews[0] ? 1 : 0)
+      .offset(y: showViews[0] ? 0 : 200)
       
       // MARK: Current week View
       HStack(spacing: 10) {
@@ -61,6 +64,8 @@ struct Home: View {
         }
       }
       .padding(.top, 10)
+      .opacity(showViews[1] ? 1 : 0)
+      .offset(y: showViews[1] ? 0 : 250)
       
       VStack(alignment: .leading, spacing: 8) {
         Text("Steps")
@@ -71,15 +76,45 @@ struct Home: View {
       }
       .frame(maxWidth: .infinity, alignment: .leading)
       .padding(.vertical, 15)
+      .opacity(showViews[2] ? 1 : 0)
+      .offset(y: showViews[2] ? 0 : 200)
       
       // MARK: Fitness Ring View
       FitnessRingCardView()
+        .opacity(showViews[3] ? 1 : 0)
+        .offset(y: showViews[3] ? 0 : 250)
       
       // MARK: Bar Graph View
       FitnessStepsGraphView()
+        .opacity(showViews[4] ? 1 : 0)
+        .offset(y: showViews[4] ? 0 : 200)
     }
     .padding()
     .onAppear(perform: extractCurrentWeek)
+    .onAppear(perform: animateViews)
+  }
+  
+  // MARK: Animate View
+  func animateViews() {
+    withAnimation(.easeInOut) {
+      showViews[0] = true
+    }
+    
+    withAnimation(.easeInOut.delay(0.1)) {
+      showViews[1] = true
+    }
+    
+    withAnimation(.easeInOut.delay(0.15)) {
+      showViews[2] = true
+    }
+    
+    withAnimation(.easeInOut.delay(0.2)) {
+      showViews[3] = true
+    }
+    
+    withAnimation(.easeInOut.delay(0.35)) {
+      showViews[4] = true
+    }
   }
   
   // MARK: Extracting Currect Week
