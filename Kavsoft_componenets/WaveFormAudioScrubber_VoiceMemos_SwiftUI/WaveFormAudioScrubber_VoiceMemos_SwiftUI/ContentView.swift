@@ -8,17 +8,30 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
+  
+  @State private var progress: CGFloat = 0
+  
+  var body: some View {
+    NavigationStack {
+      List {
+        if let audioURL {
+          Section("Borak_-_Le_Magistrat_(Original_Mix).aiff") {
+            WaveformScrubber(url: audioURL, progres: $progress) { info in
+              print(info.duration)
+            } onGestureActive: { status in
+              
+            }
+          }
         }
-        .padding()
+      }.navigationTitle("Waveform Scrubber")
     }
+  }
+  
+  var audioURL: URL? {
+    Bundle.main.url(forResource: "Borak_-_Le_Magistrat_(Original_Mix)", withExtension: "aiff")
+  }
 }
 
 #Preview {
-    ContentView()
+  ContentView()
 }
