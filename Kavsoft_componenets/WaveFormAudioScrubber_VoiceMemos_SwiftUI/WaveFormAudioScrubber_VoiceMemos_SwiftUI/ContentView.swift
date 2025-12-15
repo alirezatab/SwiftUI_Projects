@@ -21,6 +21,7 @@ struct ContentView: View {
             } onGestureActive: { status in
               
             }
+            .frame(height: 60)
           }
         }
       }.navigationTitle("Waveform Scrubber")
