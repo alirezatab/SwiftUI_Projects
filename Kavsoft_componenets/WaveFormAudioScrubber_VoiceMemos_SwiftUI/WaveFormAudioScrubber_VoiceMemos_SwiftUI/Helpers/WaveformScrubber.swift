@@ -13,21 +13,60 @@ struct WaveformScrubber: View {
   var config: Config = .init()
   var url: URL
   /// scrubber progress
-  @Binding var progres: CGFloat
+  @Binding var progress: CGFloat
   var info: (AudioInfo) -> () = { _ in }
   var onGestureActive: (Bool) -> () = { _ in }
   /// View Properties
   @State private var samples: [Float] = []
   @State private var downsizedSamples: [Float] = []
+  @State private var viewSize: CGSize = .zero
+  /// Gesture Properties
+  @State private var lastProgress: CGFloat = 0
+  @GestureState private var isActive: Bool = false
   
   var body: some View {
     ZStack {
       WaveformShape(samples: downsizedSamples)
+          .fill(config.inActiveTint)
+      
+      WaveformShape(samples: downsizedSamples)
+        .fill(config.activeTint)
+        .mask {
+          Rectangle()
+            .scale(x: progress, anchor: .leading)
+        }
     }
     .frame(maxWidth: .infinity)
+    .contentShape(.rect)
+    .gesture(
+      DragGesture()
+        .updating($isActive, body: { _, out, _ in
+          out = true
+        }).onChanged({ value in
+          let progress = max(min((value.translation.width / viewSize.width) + lastProgress, 1), 0)
+          self.progress = progress
+        }).onEnded({ _ in
+          lastProgress = progress
+        })
+    )
+    .onChange(of: progress, { oldValue, newValue in
+      // this ensures that the lastProgress is updated whenever the progress is updated from an external source
+      // e.g. not by gesture
+      guard !isActive else { return }
+      lastProgress = newValue
+    })
+    .onChange(of: isActive, { oldValue, newValue in
+      onGestureActive(newValue)
+    })
     .onGeometryChange(for: CGSize.self) {
       $0.size
     } action: { newValue in
+      /// Storing Initial Progress
+      if viewSize == .zero {
+        lastProgress = progress
+      }
+      
+      viewSize = newValue
       initializeAudioFile(newValue)
     }
   }
@@ -48,31 +87,25 @@ struct WaveformScrubber: View {
 
 /// Custom WaveForm Shape
 fileprivate struct WaveformShape: Shape {
-  var samples: [Float]
-  var spacing: Float = 2
-  var width: Float = 2
-  
-  nonisolated func path(in rect: CGRect) -> Path {
-    Path { path in
-      var x: CGFloat = 0
-      for sample in samples {
-        let height = max(CGFloat(sample) * rect.height, 1)
-        
-        path.addRect(
-          CGRect(
-            // below has the position at the top or something
-            //origin: .init(x: x + CGFloat(width), y: 0),
-            // lets position the samples at the center of the waveform view
-            origin: .init(x: x + CGFloat(width), y: -height / 2),
-            size: .init(width: CGFloat(width), height: height)
-          )
-        )
-        
-        x += CGFloat(spacing + width)
-      }
+    var samples: [Float]
+    var spacing: Float = 2
+    var width: Float = 2
+    nonisolated func path(in rect: CGRect) -> Path {
+        Path { path in
+            var x: CGFloat = 0
+            for sample in samples {
+                let height = max(CGFloat(sample) * rect.height, 1)
+                
+                path.addRect(CGRect(
+                    origin: .init(x: x + CGFloat(width), y: -height / 2),
+                    size: .init(width: CGFloat(width), height: height)
+                ))
+                
+                x += CGFloat(spacing + width)
+            }
+        }
+        .offsetBy(dx: 0, dy: rect.height / 2)
     }
-    .offsetBy(dx: 0, dy: rect.height / 2)
-  }
 }
 
 extension WaveformScrubber {
