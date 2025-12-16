@@ -62,7 +62,7 @@ struct Home: View {
           Image(systemName: "suit.heart.fill")
             .foregroundStyle(.red)
             .frame(width: 45, height: 45)
-            .background(.white)
+            .background(Color.white)
             .clipShape(Circle())
         }
         
@@ -70,7 +70,7 @@ struct Home: View {
           Image(systemName: "bookmark.fill")
             .foregroundStyle(.black)
             .frame(width: 45, height: 45)
-            .background(.white)
+            .background(Color.white)
             .clipShape(Circle())
         }
         .padding(.leading, 10)
@@ -91,10 +91,10 @@ struct Home: View {
         
         ZStack {
           Circle()
-            .fill(.white.opacity(0.05))
+            .fill(Color.white.opacity(0.2))
           
           Circle()
-            .fill(.white.opacity(0.08))
+            .fill(Color.white.opacity(0.15))
             .frame(width: animatedValue / 2, height: animatedValue / 2)
         }
         .frame(width: animatedValue, height: animatedValue)
